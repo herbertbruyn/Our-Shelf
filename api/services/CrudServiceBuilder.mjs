@@ -15,6 +15,7 @@ export default (Model) => {
     },
     
     find: async (req, res) => {
+      console.log(req.query)
       let docs;
       try { docs = await Model.find(req.query);
       } catch (e) { return errorHandler(res, e.message || 'Search failed!'); }
