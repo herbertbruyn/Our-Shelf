@@ -37,7 +37,21 @@ The app also allows users to retrieve book information from `Amazon.com`, so as 
 
 Here are some screenshots of the app while running:
 
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-around;">
 
+  <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot1.png" alt="Screenshot 1" />
+  <small>Screenshot 1. Initial screen. Option to sign-in with Google. Anonymous user has access to famous quotes.</small>
+
+  <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot2.png" alt="Screenshot 2" />
+  <small>Screenshot 2. Collection view screen. Charts with general stats.</small>
+
+  <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot3.png" alt="Screenshot 3" />
+  <small>Screenshot 3. Collection view screen. Grid view.</small>
+
+  <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot4.png" alt="Screenshot 4" />
+  <small>Screenshot 3. Collection view screen. List view.</small>
+
+</div>
 
 ---
 ## Current Scope
