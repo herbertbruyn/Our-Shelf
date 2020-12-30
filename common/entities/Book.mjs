@@ -1,0 +1,22 @@
+export default {
+  isbn10: true,
+  isbn13: true,
+  title: true,
+  description: true,
+  coverImage: true,
+  format: true,
+  language: true,
+  authors: true,
+  publishers: true,
+  edition: true,
+  pages: false,
+  publishYear: false,
+  publishDate: true,
+  private: true,
+  stars: true,
+  type: true,
+  subtypes: true,
+  keywords: false,
+  owner: true,
+  ownersReview: false
+}

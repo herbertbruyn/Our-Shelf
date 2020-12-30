@@ -1,0 +1,22 @@
+[
+  {
+    "domain": "https://www.amazon.com",
+    "link": "#search a.a-link-normal.s-no-outline",
+    "cover": "#imgBlkFront",
+    "title": "#productTitle",
+    "subtitle": "#productSubtitle",
+    "contentIFrame": "#bookDesc_iframe",
+    "content": "#iframeContent",
+    "details": "#detailBullets_feature_div > ul"
+  },
+  {
+    "domain": "https://www.amazon.com.br",
+    "link": "#search a.a-link-normal.s-no-outline",
+    "cover": "#imgBlkFront",
+    "title": "#productTitle",
+    "subtitle": "#productSubtitle",
+    "contentIFrame": "#bookDesc_iframe",
+    "content": "#iframeContent",
+    "details": "#detailBullets_feature_div > ul"
+  }
+]
