@@ -17,7 +17,7 @@
     <v-card class="mx-md-16" :loading="updating" :disabled="updating">
       <v-card-title>
         <div>
-          <v-chip label large>
+          <v-chip label>
             <v-icon>mdi-bookshelf</v-icon>
             <span v-if="books.length === 0">no books</span>
             <span v-else-if="books.length === 1">one book</span>
@@ -75,6 +75,7 @@ export default {
       updating: false,
       showDetailsDialog: false,
       confirmationDialog: false,
+      bookForm: false,
       selected: null,
       layout: 2,
       search: null,
@@ -102,11 +103,12 @@ export default {
       this.sortDesc = sortDesc;
     },
     add() {
-      console.log('add');
+      this.selected = null;
+      this.bookForm = true;
     },
     edit(book) {
-      console.log('edit', book);
-      console.log('edit', book._id);
+      this.selected = book;
+      this.bookForm = true;
     },
     remove(book) {
       this.selected = book;
@@ -116,19 +118,37 @@ export default {
       this.selected = book;
       this.showDetailsDialog = true;
     },
+    async create(bookInfo) {
+      this.updating = true;
+      try { 
+        await this.$store.dispatch('books/create', bookInfo);
+        this.$notifySuccess('Book created!'); 
+      } catch (e) {
+        this.$notifyError(e.message);
+      }
+      this.updating = false;
+    },
+    async update(bookInfo) {
+      this.updating = true;
+      try { 
+        await this.$store.dispatch('books/update', { id: this.selected._id, bookInfo });
+        this.$notifySuccess('Book updated!'); 
+      } catch (e) {
+        this.$notifyError(e.message);
+      }
+      this.updating = false;
+    },
     async deleteHandler(yes) {
       this.updating = false;
       if (!yes) { return }
       this.updating = true;
-      setTimeout(() => this.updating = false, 3000)
-      // try { 
-      //   let response = await this.$store.dispatch('deleteAccount'); 
-      //   this.$notifyInfo(response.message || 'Account deleted!'); 
-      // } catch (e) {
-      //   this.$notifyError(e.message);
-      // }
-      // this.updating = false;
-
+      try { 
+        let response = await this.$store.dispatch('books/delete', this.selected._id); 
+        this.$notifyInfo(response.message || 'Book deleted!'); 
+      } catch (e) {
+        this.$notifyError(e.message);
+      }
+      this.updating = false;
     }
   }
 }

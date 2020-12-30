@@ -15,5 +15,5 @@ export default (app) => {
 
   router.delete('/:id', publishers.delete);
 
-  app.use('/api/publishers', router);
+  app.use('/publishers', router);
 }

@@ -15,5 +15,5 @@ export default (app) => {
 
   router.delete('/:id', authors.delete);
 
-  app.use('/api/authors', router);
+  app.use('/authors', router);
 }

@@ -1,6 +1,5 @@
 import { Book } from '../models';
-import { CrudServiceBuilder } from '../services';
-import { SearchService } from '../services';
+import { CrudServiceBuilder, SearchService } from '../services';
 
 const crudService = CrudServiceBuilder(Book);
 const { errorHandler } = crudService;

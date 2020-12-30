@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 export default {
 
   getFromRequest: (req) => {
-    if (req && req.headers && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-      return req.headers.authorization.split(' ')[1];
+    if (req && req.headers && req.headers['x-token']) {
+      return req.headers['x-token'];
     }
     if (req && req.query && req.query.token) {
       return req.query.token;

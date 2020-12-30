@@ -1,5 +1,7 @@
 import { Publisher } from '../models';
 import { CrudServiceBuilder } from '../services';
 
-export default { ...CrudServiceBuilder(Publisher) };
+const crudService = CrudServiceBuilder(Publisher);
+
+export default { ...crudService };
 

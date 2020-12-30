@@ -4,7 +4,7 @@
     dark
     fixed
     color="brown lighten-3"
-    :src="require('~/assets/banner.jpg')"
+    :src="backgroundImageUrl"
   >
     <template v-slot:img="{ props }">
       <v-img
@@ -40,7 +40,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list tile>
-          <v-list-item link @click="logout()">
+          <v-list-item link @click="$emit('logout')">
             <v-list-item-avatar tile>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-avatar>
@@ -52,11 +52,11 @@
     <template v-slot:extension>
       <v-tabs v-if="$auth.loggedIn" dark background-color="brown">
         <v-tabs-slider></v-tabs-slider>
-        <v-tab v-for="item in items" :key="item.title" :title="item.title" :to="item.to">
+        <v-tab v-for="item in navItems" :key="item.title" :title="item.title" :to="item.to">
           <v-icon>mdi-{{ item.icon }}</v-icon>
         </v-tab>
       </v-tabs>
-      <v-btn v-if="!$auth.loggedIn" class="ml-auto" small text dark @click="login()">
+      <v-btn v-if="!$auth.loggedIn" class="ml-auto" small text dark @click="$emit('login')">
         <v-icon small class="mr-2">mdi-google</v-icon>
         Sign in with Google
       </v-btn>
@@ -67,40 +67,25 @@
 <script>
 export default {
   name: 'AppTopbar',
-  data () {
-    return {
-      title: 'Our Shelf',
-      imageUrl: require('~/assets/brand.jpg'),
-      items: [
-        {
-          icon: 'account-box-outline',
-          title: 'My Profile',
-          to: '/profile'
-        },
-        {
-          icon: 'bookshelf',
-          title: 'My Shelf',
-          to: '/collection'
-        },
-        {
-          icon: 'view-dashboard-outline',
-          title: 'Browse Collections',
-          to: '/'
-        },
-        {
-          icon: 'comma',
-          title: 'Famous Quotes',
-          to: '/quotes'
-        }
-      ]
-    }
-  },
-  methods: {
-    async login() {
-      await this.$store.dispatch('users/login');
+  props: {
+    title: {
+      type: String,
+      default: ''
     },
-    logout() {
-      this.$store.dispatch('users/logout');
+    backgroundImageUrl: {
+      type: String,
+      default: ''
+    },
+    navItems: {
+      type: Array,
+      required: true,
+      default: () => [],
+      validator: arr => {
+        return arr.length === 0
+          || arr.every(item => {
+            return ['icon', 'title', 'to'].every(key => key in item);
+          })
+      }
     }
   }
 }

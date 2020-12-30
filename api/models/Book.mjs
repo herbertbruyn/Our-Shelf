@@ -42,8 +42,14 @@ export default (mongoose, { patterns, enums }) => {
       trim: true,
       enum: enums.LANGUAGE
     },
-    authors: [mongoose.Schema.ObjectId],
-    publishers: [mongoose.Schema.ObjectId],
+    authors: [{
+      type: String,
+      required: true
+    }],
+    publishers: [{
+      type: String,
+      required: true
+    }],
     edition: {
       type: String,
       required: true,
@@ -74,12 +80,12 @@ export default (mongoose, { patterns, enums }) => {
     },
     type: {
       type: String,
-      require: true,
+      required: true,
       enum: enums.TYPE
     },
     subtypes: [{
       type: String,
-      require: true,
+      required: true,
       validate: {
         validator: (val, props) => enums[props.type].indexOf(val) >= 0,
         propsParameter: true 

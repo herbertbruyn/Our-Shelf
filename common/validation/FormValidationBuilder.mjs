@@ -1,4 +1,5 @@
 import { isFalsy, isString, isNumber, isFunction } from '../utils';
+import { validateIsbn10, validateIsbn13 } from './isbn';
 import patterns from './patterns';
 
 export default (validationString) => {
@@ -72,12 +73,12 @@ export default (validationString) => {
 
   function isbn10(s) {
     if (isFalsy(s)) { return true }
-    return isString(s) && patterns.ISBN10.test(s) || `Invalid ISBN-10`;
+    return isString(s) && patterns.ISBN10.test(s) && validateIsbn10(s) || `Invalid ISBN-10`;
   }
 
   function isbn13(s) {
     if (isFalsy(s)) { return true }
-    return isString(s) && patterns.ISBN13.test(s) || `Invalid ISBN-13`;
+    return isString(s) && patterns.ISBN13.test(s) && validateIsbn13(s) || `Invalid ISBN-13`;
   }
 
   const rules = {

@@ -1,13 +1,15 @@
-import AuthorsRouteBuilder from './authors';
-import BooksRouteBuilder from './books';
-import PublishersRouteBuilder from './publishers';
-import UsersRouteBuilder from './users';
+import setAuthorsRoutes from './authors';
+import setBooksRoutes from './books';
+import setPublishersRoutes from './publishers';
+import setUsersRoutes from './users';
 
 export default (app) => {
-  return { 
-    authors: AuthorsRouteBuilder(app),
-    books: BooksRouteBuilder(app),
-    publishers: PublishersRouteBuilder(app),
-    users: UsersRouteBuilder(app)
-  }
+  setAuthorsRoutes(app);
+  setBooksRoutes(app);
+  setPublishersRoutes(app);
+  setUsersRoutes(app);
+
+  app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found or missing resource...' })
+  })  
 }

@@ -67,7 +67,7 @@
                 min="1900-01-01"
                 @input="picker = false"
                 @change="checkFields()"
-          ></v-date-picker>
+              ></v-date-picker>
             </v-menu>
           </v-col>
         </v-row>
@@ -137,8 +137,6 @@
 </template>
 
 <script>
-import * as jwt from 'jsonwebtoken';
-
 export default {
   name: 'AppUserProfile',
   data() {

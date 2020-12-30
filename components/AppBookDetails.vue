@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="value" persistent max-width="80%">
     <v-card>
-      <v-card-title class="headline blue lighten-5 blue--text text--darken-4">
+      <v-card-title class="headline brown lighten-5 brown--text text--darken-4">
         Book Details
       </v-card-title>
       <v-divider></v-divider>

@@ -7,7 +7,8 @@ export default (mongoose, { patterns }) => {
       required: true,
       minlength: 5,
       maxlength: 50,
-      index: true
+      index: true,
+      unique: true
     },
     picture: {
       type: String,

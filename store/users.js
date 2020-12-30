@@ -10,8 +10,9 @@ export const actions = {
     dispatch('token/clearToken', null, { root: true });
   },
 
-  async updateAccount({ dispatch }, userInfo) {
+  async updateAccount({ rootState, dispatch }, userInfo) {
     let response;
+    this.$axios.setHeader('x-token', rootState.token.jwt);
     try { response = await this.$axios.$put(`/api/users/${this.$auth.user._id}`, userInfo);
     } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Update error!'); }
 
@@ -20,8 +21,9 @@ export const actions = {
     await dispatch('token/parseToken', token, { root: true });
   },
 
-  async deleteAccount({ dispatch }) {
+  async deleteAccount({ rootState, dispatch }) {
     let response;
+    this.$axios.setHeader('x-token', rootState.token.jwt);
     try { response = await this.$axios.$delete(`/api/users/${this.$auth.user._id}`);
     } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Deletion error!') }
 

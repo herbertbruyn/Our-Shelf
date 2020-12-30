@@ -88,17 +88,27 @@ export default {
     'Hard Case Dust Jacket',
     'e-Book'
   ],
-  SORT_KEYS: [
-    'title',
-    'description',
-    'format',
-    'language',
-    'publishYear',
-    'publishDate',
-    'private',
-    'stars',
-    'type',
-    'subtypes',
-    'keywords'
-  ]
+  SORT_KEYS: {
+    BOOKS: [
+      'title',
+      'format',
+      'language',
+      'publishYear',
+      'publishDate',
+      'private',
+      'stars'
+    ],
+    AUTHORS: [
+      'name',
+      'birthDate',
+      'deathDate',
+      'birthPlace',
+      'deathPlace'
+    ],
+    PUBLISHERS: [
+      'name',
+      'country',
+      'city'
+    ]
+  }
 }

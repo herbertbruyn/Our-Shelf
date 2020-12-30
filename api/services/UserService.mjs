@@ -15,6 +15,11 @@ export default {
     return user;
   },
 
+  findById: async (id) => {
+    try { return await User.findById(id); 
+    } catch (e) { throw new Error(e) }
+  },
+
   find: async (query) => {
     try { return await User.find(query); 
     } catch (e) { throw new Error(e) }

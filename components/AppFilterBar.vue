@@ -10,7 +10,7 @@
           <h1 class="brown--text text--lighten-5 text-h2">{{ title }}</h1>
         </v-col>
         <v-col cols="12" sm="4" class="d-flex justify-center justify-sm-end align-center">
-          <v-btn-toggle
+          <v-btn-toggle v-if="type === 'books'"
             :value="layout" 
             mandatory
             @change="$emit('layoutchange', $event)"
@@ -41,7 +41,7 @@
             @input="$emit('searchchange', $event)"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col v-if="type === 'books'" cols="12" sm="6" md="3">
           <v-select
             label="Subcategory" 
             :value="subtype" 
@@ -54,6 +54,19 @@
             @input="$emit('subtypechange', $event)"
           ></v-select>
         </v-col>
+        <v-col v-else cols="12" sm="6" md="3">
+          <v-select
+            label="Starting with" 
+            :value="letter" 
+            color="brown darken-5"
+            class="brown--text text--darken-5"
+            solo 
+            clearable
+            hide-details
+            :items="letters"
+            @input="$emit('letterchange', $event)"
+          ></v-select>
+        </v-col>
         <v-col cols="12" sm="6" md="3">
           <v-select
             :value="sortBy"
@@ -62,7 +75,7 @@
             solo 
             clearable
             hide-details
-            :items="keys"
+            :items="keys[type]"
             label="Sort by"
             @input="$emit('sortbychange', $event)"
           ></v-select>
@@ -74,10 +87,10 @@
             @change="$emit('sortdescchange', $event)"
           >
             <v-btn depressed :value="false">
-              <v-icon>mdi-arrow-up</v-icon>
+              <v-icon color="brown darken-4">mdi-arrow-up</v-icon>
             </v-btn>
             <v-btn depressed :value="true">
-              <v-icon>mdi-arrow-down</v-icon>
+              <v-icon color="brown darken-4">mdi-arrow-down</v-icon>
             </v-btn>
           </v-btn-toggle>
         </v-col>
@@ -90,11 +103,16 @@
 import { enums } from '@/common';
 
 export default {
-  name: 'AppSearchBar',
+  name: 'AppFilterBar',
   props: {
+    type: {
+      type: String,
+      default: 'books',
+      validator: val => [ 'books', 'authors', 'publishers' ].includes(val)
+    },
     title: {
       type: String,
-      default: 'Collection Name'
+      default: 'My Collection'
     },
     search: {
       type: String,
@@ -113,9 +131,13 @@ export default {
       type: String,
       required: false
     },
+    letter: {
+      type: String,
+      required: false
+    },
     layout: {
       type: Number,
-      default: 0
+      default: 2
     },
     disabled: {
       type: Boolean,
@@ -125,7 +147,12 @@ export default {
   data() {
     return {
       subtypes: Array.prototype.concat(enums.FICTION, enums.NON_FICTION).sort(),
-      keys: enums.SORT_KEYS
+      letters: 'ABCDEFGHIJKLMNOPQRSTUVXYWZ'.split(''),
+      keys: {
+        books: enums.SORT_KEYS.BOOKS,
+        authors: enums.SORT_KEYS.AUTHORS,
+        publishers: enums.SORT_KEYS.PUBLISHERS
+      }
     }
   },
   computed: {

@@ -1,6 +1,12 @@
 <template>
   <v-app style="background: transparent;">
-    <app-topbar></app-topbar>
+    <app-topbar
+      :title="title"
+      :background-image-url="imageUrl"
+      :nav-items="items"
+      @login="login()"
+      @logout="logout()"
+    ></app-topbar>
     <v-main>
       <v-container fill-height fluid class="main-content">
         <nuxt />
@@ -16,8 +22,45 @@
 </template>
 
 <script>
-
 export default { 
+  data() {
+    return {
+      title: 'Our Shelf',
+      imageUrl: require('~/assets/banner.jpg'),
+      items: [
+        {
+          icon: 'account-box-outline',
+          title: 'My Profile',
+          to: '/profile'
+        },
+        {
+          icon: 'bookshelf',
+          title: 'My Shelf',
+          to: '/collection'
+        },
+        {
+          icon: 'view-dashboard-outline',
+          title: 'Browse Collections',
+          to: '/'
+        },
+        {
+          icon: 'fountain-pen-tip',
+          title: 'Browse Authors',
+          to: '/authors'
+        },
+        {
+          icon: 'domain',
+          title: 'Browse Publishers',
+          to: '/publishers'
+        },
+        {
+          icon: 'comma',
+          title: 'Famous Quotes',
+          to: '/quotes'
+        }
+      ]
+    }
+  },
   computed: {
     color() {
       return this.$store.state.notification.color;
@@ -32,6 +75,14 @@ export default {
       set(status) {
         this.$store.commit('notification/SET_STATUS', status); 
       }
+    }
+  },
+  methods: {
+    async login() {
+      await this.$store.dispatch('users/login');
+    },
+    logout() {
+      this.$store.dispatch('users/logout');
     }
   }
 }

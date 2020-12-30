@@ -10,9 +10,24 @@ export default {
     }
     let user;
     try { user = await UserService.signInOrSignUp(req.body);
-    } catch (e) { return res.status(500).send({ message: e.message || 'User sign in failed!' }) }
+    } catch (e) { return res.status(500).send({ message: e.message || 'User sign in failed!' }); }
 
     return res.status(200).send({ token: TokenService.encode(user, process.env.JWT_SIGNATURE) });
+  },
+
+  checkToken: async (req) => {
+    let token = TokenService.getFromRequest(req);
+    if (!token) { throw new Error('No credentials found!'); }
+
+    let userData;
+    try { userData = TokenService.decode(token, process.env.JWT_SIGNATURE); 
+    } catch (e) { throw new Error('Invalid token!'); }
+
+    let user;
+    try { user = await UserService.findById(userData._id); 
+    } catch (e) { throw new Error(e.message); }
+
+    if (!user) { throw new Error('Invalid credentials!'); }
   },
 
   find: async (req, res) => {

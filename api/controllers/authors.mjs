@@ -1,4 +1,6 @@
 import { Author } from '../models';
 import { CrudServiceBuilder } from '../services';
 
-export default { ...CrudServiceBuilder(Author) };
+const crudService = CrudServiceBuilder(Author);
+
+export default { ...crudService };

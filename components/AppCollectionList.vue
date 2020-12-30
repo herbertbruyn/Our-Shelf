@@ -52,7 +52,7 @@ export default {
     sortBy: {
       type: String,
       default: enums.SORT_KEYS[0],
-      validator: val => enums.SORT_KEYS.includes(val)
+      validator: val => enums.SORT_KEYS.BOOKS.includes(val)
     },
     sortDesc: {
       type: Boolean,

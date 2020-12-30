@@ -6,7 +6,8 @@ export default (mongoose) => {
       trim: true,
       required: true,
       minlength: 5,
-      maxlength: 100,
+      maxlength: 30,
+      unique: true,
       index: true
     },
     country: {
