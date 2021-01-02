@@ -7,6 +7,7 @@
       :subtype="subtype"
       :sort-by="sortBy"
       :sort-desc="sortDesc"
+      :layouts="['charts', 'list', 'grid']"
       :layout="layout"
       :disabled="updating"
       @searchchange="searchChangeHandler"
@@ -25,7 +26,16 @@
             <span v-else>{{ books.length }} books</span>
           </v-chip>
         </div>
-        <div class="ml-auto">
+        <div class="ml-auto d-flex flex-row align-center">
+          <v-select v-if="layout === 'grid'"
+            class="mr-4"
+            solo 
+            dense
+            hide-details
+            label="Size"
+            v-model="size"
+            :items="['cover', 'small', 'medium', 'large']"
+          ></v-select>
           <v-btn color="success" @click="add()">
             <span class="mr-3">New Book</span>
             <v-icon>mdi-plus-circle</v-icon>
@@ -33,10 +43,10 @@
         </div>
       </v-card-title>
       <v-card-text>
-        <app-collection-dashboard v-if="layout === 0" 
+        <app-collection-dashboard v-if="layout === 'charts'" 
           :books="books"
         ></app-collection-dashboard>
-        <app-collection-list v-else-if="layout === 1"
+        <app-collection-list v-else-if="layout === 'list'"
           :books="books"
           :search="search"
           :subtype="subtype"
@@ -52,6 +62,7 @@
           :subtype="subtype"
           :sort-by="sortBy || 'title'"
           :sort-desc="sortDesc"
+          :size="size"
           @edit="edit"
           @remove="remove"
           @showdetails="showDetails"
@@ -90,7 +101,8 @@ export default {
         details: false
       },
       selected: null,
-      layout: 2,
+      layout: 'grid',
+      size: 'small',
       search: null,
       subtype: null,
       sortBy: '',

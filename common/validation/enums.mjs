@@ -109,7 +109,13 @@ export default {
       'name',
       'country',
       'city'
-    ]
+    ],
+    USERS: [
+      'name',
+      'birthDate',
+      'email',
+      'collectionName'
+    ],
   },
   COUNTRY: {
     "Afghanistan": [

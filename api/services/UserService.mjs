@@ -21,7 +21,7 @@ export default {
   },
 
   find: async (query) => {
-    try { return await User.find(query).select('collectionName createdAt email picture interests description name'); 
+    try { return await User.find(query).select('collectionName createdAt birthDate email picture interests description name given_name color palette -_id'); 
     } catch (e) { throw new Error(e) }
   },
 

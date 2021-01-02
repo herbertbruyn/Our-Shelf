@@ -8,17 +8,14 @@
     :sort-desc="sortDesc"    
   >
     <template v-slot:default="props">
-      <v-row>
-        <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="author in props.items" :key="author._id">
-          <div class="d-flex justify-center">
-            <app-author-card size="small"
-              :author="author"
-              @edit="$emit('edit', author)"
-              @remove="$emit('remove', author)"
-            ></app-author-card>
-          </div>
-        </v-col>
-      </v-row>
+      <div class="d-flex flex-wrap justify-start">
+        <app-author-card size="small" v-for="author in props.items" :key="author._id"
+          class="ma-1"
+          :author="author"
+          @edit="$emit('edit', author)"
+          @remove="$emit('remove', author)"
+        ></app-author-card>
+      </div>
     </template>
   </v-data-iterator>
 </template>

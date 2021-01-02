@@ -12,7 +12,7 @@
         <app-book-card v-for="book in props.items" :key="book._id"
           class="ma-1"
           :book="book"
-          :size="readonly ? 'cover' : undefined"
+          :size="size"
           @edit="$emit('edit', book)"
           @remove="$emit('remove', book)"
           @showdetails="$emit('showdetails', book)"
@@ -56,11 +56,16 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    },
+    size: {
+      type: String,
+      default: 'medium',
+      validator: val => ['cover', 'small', 'medium', 'large'].includes(val)
     }
   },
   data() {
     return {
-      itemsPerPage: 5,
+      itemsPerPage: 10,
       itemsPerPageArray: [5, 10, 15],
       page: 1
     }

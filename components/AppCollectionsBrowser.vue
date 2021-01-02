@@ -1,74 +1,90 @@
 <template>
   <div>
-    <app-filter-bar class="mx-md-16 mb-4"
-      title="Browse Collections"
-      type="collections"
-      :src="require('~/assets/banner_browser.jpg')"
-      :search="search"
-      :subtype="subtype"
-      :sort-by="sortBy"
-      :sort-desc="sortDesc"
-      :disabled="updating"
-      @searchchange="searchChangeHandler"
-      @subtypechange="subtypeChangeHandler"
-      @sortbychange="sortByChangeHandler"
-      @sortdescchange="sortDescChangeHandler"
-    ></app-filter-bar>
+    <v-fade-transition>
+      <app-filter-bar v-if="user.selected"
+        class="mx-md-16 mb-4"
+        :title="user.selected.collectionName"
+        type="books"
+        :src="require('~/assets/banner.jpg')"
+        :search="book.search"
+        :subtype="book.subtype"
+        :sort-by="book.sortBy"
+        :sort-desc="book.sortDesc"
+        :disabled="updating"
+        :layouts="['charts', 'grid']"
+        :layout="book.layout"
+        @searchchange="searchChangeHandler('book', $event)"
+        @subtypechange="subtypeChangeHandler('book', $event)"
+        @sortbychange="sortByChangeHandler('book', $event)"
+        @sortdescchange="sortDescChangeHandler('book', $event)"
+        @layoutchange="layoutChangeHandler('book', $event)"
+      ></app-filter-bar>
+      <app-filter-bar v-else
+        class="mx-md-16 mb-4"
+        title="Browse Collections"
+        type="users"
+        :src="require('~/assets/banner_browser.jpg')"
+        :search="user.search"
+        :letter="user.letter"
+        :sort-by="user.sortBy"
+        :sort-desc="user.sortDesc"
+        :disabled="updating"
+        @searchchange="searchChangeHandler('user', $event)"
+        @letterchange="letterChangeHandler('user', $event)"
+        @sortbychange="sortByChangeHandler('user', $event)"
+        @sortdescchange="sortDescChangeHandler('user', $event)"
+      ></app-filter-bar>
+    </v-fade-transition>
     <v-row class="mx-md-16">
-      <v-col cols="12" md="4" lg="3" xl="2">
+      <v-col>
         <v-card color="light-blue lighten-4">
-          <v-card-title>Our Community</v-card-title>
+          <v-card-title class="text-h4 blue--text text--darken-4">Our Community</v-card-title>
           <v-card-text>
-            <v-list two-line dense tile>
-              <v-list-item-group @change="selectUser">
-                <template v-for="(user, index) in users">
-                  <v-list-item :key="user.email" :title="user.collectionName">
-                    <v-list-item-avatar>
-                      <v-img :src="user.picture"></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ user.collectionName }}</v-list-item-title>
-                      <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider
-                    v-if="index < users.length - 1"
-                    :key="index"
-                  ></v-divider>                  
-                </template>              
-              </v-list-item-group>
-            </v-list>
+            <app-users-grid 
+              :users="users"
+              :search="user.search"
+              :letter="user.letter"
+              :sort-by="user.sortBy || 'name'"
+              :sort-desc="user.sortDesc"
+              @select="selectUser"
+            ></app-users-grid>
           </v-card-text>
         </v-card>
-      </v-col>
-      <v-col cols="12" md="8" lg="9" xl="10">
-        <v-card :loading="updating" :disabled="updating">
-          <v-card-title>
-            <div>
-              <v-chip label>
-                <v-icon>mdi-bookshelf</v-icon>
-                <span v-if="books.length === 0">no books</span>
-                <span v-else-if="books.length === 1">one book</span>
-                <span v-else>{{ books.length }} books</span>
-              </v-chip>
-            </div>
-          </v-card-title>
-          <v-card-text>
-            <app-collection-grid
-              :books="books"
-              :search="search"
-              :subtype="subtype"
-              :sort-by="sortBy || 'title'"
-              :sort-desc="sortDesc"
-              readonly
-              @showdetails="showDetails"
-            ></app-collection-grid>
-          </v-card-text>
-        </v-card>
-        <app-book-details v-if="selected.book" v-model="show.book" :book="selected.book"></app-book-details>
-
       </v-col>
     </v-row>
+    <v-fade-transition>
+      <v-row v-if="user.selected" class="mx-md-16">
+        <v-col>
+          <v-card :loading="updating" :disabled="updating">
+            <v-card-title>
+              <div>
+                <v-chip label>
+                  <v-icon>mdi-bookshelf</v-icon>
+                  <span v-if="books.length === 0">no books</span>
+                  <span v-else-if="books.length === 1">one book</span>
+                  <span v-else>{{ books.length }} books</span>
+                </v-chip>
+              </div>
+            </v-card-title>
+            <v-card-text>
+              <app-collection-dashboard v-if="book.layout === 'charts'" 
+                :books="books"
+              ></app-collection-dashboard>
+              <app-collection-grid v-else
+                :books="books"
+                :search="book.search"
+                :subtype="book.subtype"
+                :sort-by="book.sortBy || 'title'"
+                :sort-desc="book.sortDesc"
+                size="cover"
+                @showdetails="showDetails('book', $event)"
+              ></app-collection-grid>
+            </v-card-text>
+          </v-card>
+          <app-book-details v-if="book.selected" v-model="book.show" :book="book.selected"></app-book-details>
+        </v-col>
+      </v-row>
+    </v-fade-transition>
   </div>
 </template>
 
@@ -81,18 +97,23 @@ export default {
       updating: false,
       index: null,
       books: [],
-      show: {
-        book: false,
-        user: false
+      book: {
+        selected: null,
+        show: false,
+        search: null,
+        subtype: null,
+        sortBy: '',
+        sortDesc: false,
+        layout: 'grid'
       },
-      selected: {
-        book: null,
-        user: null
-      },
-      search: null,
-      subtype: null,
-      sortBy: '',
-      sortDesc: false
+      user: {
+        selected: null,
+        show: false,
+        search: null,
+        letter: null,
+        sortBy: '',
+        sortDesc: false
+      }
     }
   },
   computed: {
@@ -101,31 +122,39 @@ export default {
     }
   },
   methods: {
-    async selectUser(index) {
-      this.selected.user = this.users[index];
+    async selectUser(user) {
+      this.user.selected = user;
+      if (this.user.selected === null) return;
       this.updating = true;
-      try { this.books = await this.$store.dispatch('books/getUserCollection', this.selected.user.email);
+      try { this.books = await this.$store.dispatch('books/getUserCollection', this.user.selected.email);
       } catch(e) {
         if (process.client) this.$notifyError(e.message) 
         if (this.$store.state.isDev) console.log(e);
       }
       this.updating = false;
     },
-    searchChangeHandler(search) {
-      this.search = search;
+    searchChangeHandler(type, search) {
+      this[type].search = search;
+      console.log(this.user.search);
     },
-    subtypeChangeHandler(subtype) {
-      this.subtype = subtype;
+    letterChangeHandler(type, letter) {
+      this[type].letter = letter;
     },
-    sortByChangeHandler(sortBy) {
-      this.sortBy = sortBy;
+    subtypeChangeHandler(type, subtype) {
+      this[type].subtype = subtype;
     },
-    sortDescChangeHandler(sortDesc) {
-      this.sortDesc = sortDesc;
+    sortByChangeHandler(type, sortBy) {
+      this[type].sortBy = sortBy;
     },
-    showDetails(book) {
-      this.selected.book = book;
-      this.show.book = true;
+    sortDescChangeHandler(type, sortDesc) {
+      this[type].sortDesc = sortDesc;
+    },
+    layoutChangeHandler(type, layout) {
+      this[type].layout = layout;
+    },
+    showDetails(type, data) {
+      this[type].selected = data;
+      this[type].show = true;
     }
   }
 }

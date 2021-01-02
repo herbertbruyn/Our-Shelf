@@ -46,6 +46,7 @@
                   class="text-center"
                   v-model="formData.stars" 
                   dense
+                  clearable
                   color="orange"
                   background-color="orange lighten-3" 
                   length="5" 

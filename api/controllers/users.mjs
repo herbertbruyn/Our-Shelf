@@ -10,9 +10,7 @@ export default {
     }
     let user;
     try { user = await UserService.signInOrSignUp(req.body);
-    } catch (e) { 
-      console.log(e)
-      return res.status(500).send({ message: e.message || 'User sign in failed!' }); }
+    } catch (e) { return res.status(500).send({ message: e.message || 'User sign in failed!' }); }
 
     return res.status(200).send({ token: TokenService.encode(user, process.env.JWT_SIGNATURE) });
   },
@@ -30,6 +28,8 @@ export default {
     } catch (e) { throw new Error(e.message); }
 
     if (!user) { throw new Error('Invalid credentials!'); }
+
+    return user;
   },
 
   find: async (req, res) => {
@@ -42,6 +42,9 @@ export default {
   },
 
   update: async (req, res) => {
+    if (req.params && req.params.id && req.params.id !== req.currentUser._id.toString()) {
+      return res.status(401).send({ message: 'Unauthorized!' });
+    }
     let user;
     try { user = await UserService.update(req.params.id, req.body);
     } catch(e) { return res.status(500).send({ message: e.message || 'Update failed!' }); }
@@ -51,6 +54,9 @@ export default {
   },
 
   delete: async (req, res) => {
+    if (req.params && req.params.id && req.params.id !== req.currentUser._id.toString()) {
+      return res.status(401).send({ message: 'Unauthorized!' });
+    }
     let user;
     try { user = await UserService.delete(req.params.id);
     } catch(e) { return res.status(500).send({ message: e.message || 'Deletion failed!' }); }

@@ -29,16 +29,6 @@ export default {
       imageUrl: require('~/assets/banner.jpg'),
       items: [
         {
-          icon: 'account-box-outline',
-          title: 'My Profile',
-          to: '/profile'
-        },
-        {
-          icon: 'bookshelf',
-          title: 'My Shelf',
-          to: '/collection'
-        },
-        {
           icon: 'view-dashboard-outline',
           title: 'Browse Collections',
           to: '/'
@@ -52,6 +42,16 @@ export default {
           icon: 'domain',
           title: 'Browse Publishers',
           to: '/publishers'
+        },
+        {
+          icon: 'bookshelf',
+          title: 'My Shelf',
+          to: '/collection'
+        },
+        {
+          icon: 'account-box-outline',
+          title: 'My Profile',
+          to: '/profile'
         },
         {
           icon: 'tools',

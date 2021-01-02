@@ -9,7 +9,7 @@ export default (Model) => {
     errorHandler,
 
     create: async (req, res) => {
-      if (req.body._id === null) { delete req.body._id; }      
+      if (req.body._id === null) { delete req.body._id; }
       try { res.send(await Model.create(req.body));
       } catch (e) { return errorHandler(res, e.message || 'Register creation failed!'); }
     },

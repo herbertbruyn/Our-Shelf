@@ -68,6 +68,14 @@ export default (mongoose, { patterns }) => {
       trim: true,
       required: false,
       match: patterns.DATE
+    },
+    color: {
+      type: Array, 
+      required: false
+    },
+    palette: {
+      type: Array,
+      required: false
     }
   }, options);
   return mongoose.model('User', schema);
