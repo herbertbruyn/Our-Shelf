@@ -9,7 +9,7 @@
 
 <script>
 export default { 
-  async asyncData({ store, $notifyError }) {
+  async asyncData({ store, $notifyError, isDev }) {
     try {
       await store.dispatch('books/getMyCollection');
       await store.dispatch('authors/getList');
