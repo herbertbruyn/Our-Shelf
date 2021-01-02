@@ -3,6 +3,7 @@
     <app-filter-bar class="mx-md-16 mb-4"
       type="authors"
       title="Authors"
+      :src="require('~/assets/banner_authors.jpg')"
       :search="search"
       :letter="letter"
       :sort-by="sortBy"
@@ -43,11 +44,10 @@
         ></app-authors-grid>
       </v-card-text>
     </v-card>
-    <app-author-details v-if="selected" v-model="show.details" :book="selected"></app-author-details>
-    <v-dialog max-width="900" v-model="form">
+    <v-dialog max-width="900" v-model="show.form">
       <app-author-form
         :author="selected"
-        @cancel="form = false"
+        @cancel="cancel"
         @add="create"
         @update="update"
       ></app-author-form>
@@ -68,9 +68,9 @@ export default {
       updating: false,
       show: {
         confirmation: false,
-        details: false
+        details: false,
+        form: false
       },
-      form: false,
       selected: null,
       search: null,
       letter: null,
@@ -96,13 +96,17 @@ export default {
     sortDescChangeHandler(sortDesc) {
       this.sortDesc = sortDesc;
     },
+    cancel() {
+      this.selected = null;
+      this.show.form = false;
+    },
     add() {
       this.selected = null;
-      this.form = true;
+      this.show.form = true;
     },
     edit(author) {
       this.selected = author;
-      this.form = true;
+      this.show.form = true;
     },
     remove(author) {
       this.selected = author;
@@ -113,6 +117,7 @@ export default {
       this.show.details = true;
     },
     async create(authorInfo) {
+      this.show.form = false;
       this.updating = true;
       try { 
         await this.$store.dispatch('authors/create', authorInfo);
@@ -120,9 +125,11 @@ export default {
       } catch (e) {
         this.$notifyError(e.message);
       }
+      this.selected = null;
       this.updating = false;
     },
     async update(authorInfo) {
+      this.show.form = false;
       this.updating = true;
       try { 
         await this.$store.dispatch('authors/update', { id: this.selected._id, authorInfo });
@@ -130,6 +137,7 @@ export default {
       } catch (e) {
         this.$notifyError(e.message);
       }
+      this.selected = null;
       this.updating = false;
     },
     async deleteHandler(yes) {

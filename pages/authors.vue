@@ -1,7 +1,7 @@
 <template>
   <v-row class="mb-auto">
     <v-col>
-      <app-authors-crud></app-authors-crud>
+      <app-authors></app-authors>
     </v-col>
   </v-row>
 
@@ -9,11 +9,11 @@
 
 <script>
 export default { 
-  async asyncData({ store, $notifyError }) {
+  async asyncData({ store, $notifyError, isDev }) {
     try { await store.dispatch('authors/getList')
     } catch(e) {
-      if (process.client) return $notifyError(e.message) 
-      console.log(e);
+      if (process.client) { $notifyError(e.message) } 
+      if (isDev) { console.log(e); }
     }
   }
 }

@@ -17,7 +17,7 @@ export const mutations = {
     if (index < 0) {
       throw new Error('Database is updated, but local list of publishers appears to be inconsistent!');
     }
-    state.list[index] = publisher;
+    state.list.splice(index, 1, publisher);
   },
 
   delete(state, id) {
@@ -35,7 +35,10 @@ export const actions = {
     let publishers;
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { publishers = await this.$axios.$get(`/api/publishers`);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Error ocurred while retrieving publishers!'); }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Error ocurred while retrieving publishers!'); 
+    }
 
     commit('setList', publishers);
 
@@ -45,8 +48,11 @@ export const actions = {
   async create({ rootState, commit }, publisherInfo) {
     let publisher;
     this.$axios.setHeader('x-token', rootState.token.jwt);
-    try { author = await this.$axios.$post(`/api/publishers`, publisherInfo);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Error occurred while creating publisher!'); }
+    try { publisher = await this.$axios.$post(`/api/publishers`, publisherInfo);
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Error occurred while creating publisher!'); 
+    }
 
     commit('add', publisher);
 
@@ -58,7 +64,10 @@ export const actions = {
     let publisher;
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { publisher = await this.$axios.$put(`/api/publishers/${id}`, publisherInfo);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Update error!'); }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Update error!'); 
+    }
 
     commit('update', { id, publisher });
 
@@ -69,7 +78,10 @@ export const actions = {
     let response;
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { response = await this.$axios.$delete(`/api/publishers/${id}`);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Deletion error!') }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Deletion error!') 
+    }
 
     commit('delete', id);
 

@@ -1,58 +1,104 @@
 <template>
-  <v-form ref="publisherForm">
+  <v-form ref="publisherForm" v-model="valid">
     <v-card>
-      <v-card-text>
+      <v-card-title class="headline brown lighten-5 brown--text text--darken-4">
+        <v-icon large class="mr-1">mdi-domain</v-icon>
+        <span v-if="isNew">Insert New Publisher</span>
+        <span v-else>Edit Publisher</span>
+      </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text class="px-12">
         <v-row>
-          <v-col>
-            <v-text-field
-              v-model="publisherInfo.name"
-              outlined
-              label="Name"
-              placeholder=" "
-              :rules="rules.name"
-              @input="checkFields()"
-            >
-            </v-text-field>
+          <v-col cols="12" md="4" class="py-0">
+            <app-image-input 
+              required 
+              label="Logo"
+              height="235" 
+              width="235"
+              v-model="formData.logo"
+              :rules="rules.logo"
+            ></app-image-input>
           </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="publisherInfo.country"
-              outlined
-              label="Country"
-              placeholder=" "
-              :rules="rules.country"
-              @input="checkFields()"
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="publisherInfo.city"
-              outlined
-              label="City"
-              placeholder=" "
-              :rules="rules.city"
-              @input="checkFields()"
-            >
-            </v-text-field>
+          <v-col cols="12" md="8" class="py-0">
+            <v-row>
+              <v-col class="py-0">
+                <v-text-field
+                  v-model="formData.name"
+                  dense 
+                  outlined
+                  clearable
+                  label="Publisher's Name"
+                  placeholder=" "
+                  :rules="rules.name"
+                  autocomplete="off"
+                  @input="checkForm()"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="8" class="py-0">
+                <v-select
+                  v-model="formData.country"
+                  :items="countries"
+                  dense
+                  outlined
+                  clearable
+                  label="Country"
+                  placeholder=" "
+                  :rules="rules.country"
+                  autocomplete="off"
+                  @input="checkForm()"
+                  @change="formData.province = null"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="8" class="py-0">
+                <v-select
+                  v-model="formData.province"
+                  :items="formData.country ? provinces[formData.country] : []"
+                  dense
+                  outlined
+                  clearable
+                  label="Province"
+                  placeholder=" "
+                  :rules="rules.province"
+                  autocomplete="off"
+                  @input="checkForm()"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="py-0">
+                <v-text-field 
+                  v-model="formData.city" 
+                  dense
+                  outlined
+                  label="City"
+                  placeholder=" "
+                  :rules="rules.city"
+                  autocomplete="off"
+                  @input="checkForm()"
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-card-text>
-      <v-card-actions class="px-4 pb-5">
+      <v-card-actions class="px-8 pb-8">
+        <v-btn large icon @click="reset()">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
         <div class="ml-auto">
-          <v-btn large text @click="cancel()">cancel</v-btn>
-          <v-btn large text class="ml-2" 
+          <v-btn x-large outlined class="mr-4" color="grey" @click="cancel()">cancel</v-btn>
+          <v-btn x-large depressed class="ml-2" 
             :class="!valid || !touched ? '' : (isNew ? 'primary' : 'success')" 
             :disabled="!valid || !touched" 
             @click="submit()">
             <span v-if="isNew">Create</span>
             <span v-else>Update</span>
-            <v-icon v-if="isNew" small class="ml-2">mdi-plus-circle-outline</v-icon>
-            <v-icon v-else small class="ml-2">mdi-content-save</v-icon>
+            <v-icon v-if="isNew" class="ml-2">mdi-plus-circle-outline</v-icon>
+            <v-icon v-else class="ml-2">mdi-content-save</v-icon>
           </v-btn>
         </div>
       </v-card-actions>
@@ -61,7 +107,7 @@
 </template>
 
 <script>
-import { entities, enums, publisherValidator } from '@/common';
+import { enums, entities, propsValidators, formRules, equals, cropClone } from '@/common';
 const { Publisher } = entities;
 
 export default {
@@ -71,23 +117,24 @@ export default {
       type: Object,
       required: false,
       default: null,
-      validator: publisher => publisherValidator(publisher)
+      validator: publisher => propsValidators.publisher(publisher)
     }
   },
   data() {
     return {
       valid: false,
       touched: false,
-      publisherInfo: {
-        name: null,
-        country: null,
-        city: null
-      },
-      rules: {
-        name: [],
-        country: [],
-        city: []
-      }
+      formData: { ...Publisher },
+      initial: { ...Publisher },
+      rules: formRules.publisher,
+      countries: Object.keys(enums.COUNTRY),
+      provinces: enums.COUNTRY
+    }
+  },
+  watch: {
+    publisher(val) {
+      this.setInitial();
+      this.reset();
     }
   },
   computed: {
@@ -96,43 +143,38 @@ export default {
     }
   },
   methods: {
+    setInitial() {
+      this.initial = this.publisher === null ? { ...Publisher } : cropClone(this.publisher, Publisher);
+    },
+    resetFormData() {
+      this.formData = this.isNew ? { ...Publisher } : { ...this.initial };
+    },
     reset() {
-      if (this.$refs.publisherForm) {
-        this.$refs.publisherForm.reset();
-      }
+      if (this.$refs.publisherForm) this.$refs.publisherForm.reset();
       this.$nextTick(() => {
-        this.publisherInfo.name = this.publisher.name || '';
-        this.publisherInfo.country = this.publisher.country || '';
-        this.publisherInfo.city = this.publisher.city || '';
-        this.touched = false;
+        this.resetFormData();
+        this.checkForm();
       });
     },
-    equals(a, b) {
-      return JSON.stringify(a) === JSON.stringify(b);
-    },
-    checkFields() {
-      this.touched = this.isNew 
-          || !this.equals(this.publisherInfo.name, this.publisher.name)
-          || !this.equals(this.publisherInfo.country, this.publisher.country)
-          || !this.equals(this.publisherInfo.city, this.publisher.city)
+    checkForm() {
+      this.touched = this.isNew || !equals(this.formData, this.initial);
     },
     cancel() {
-      this.reset();
       this.$emit('cancel');
+      this.reset();
     },
     submit() {
-      if (this.isNew) {
-        this.$emit('add', this.publisherInfo);
-      } else {
-        this.$emit('update', this.publisherInfo);        
+      this.$refs.publisherForm.validate();
+      if (this.valid) {
+        let event = this.isNew ? 'add' : 'update';
+        this.$emit(event, { ...this.formData });
+        this.reset();
       }
     }
   },
   mounted() {
+    this.setInitial();
     this.reset();
-    this.rules.name = this.$createRules('required|minLength:5|maxLength:30');
-    this.rules.country = this.$createRules('required|minLength:5|maxLength:50');
-    this.rules.city = this.$createRules('required|minLength:5|maxLength:50');
   }
 }
 </script>

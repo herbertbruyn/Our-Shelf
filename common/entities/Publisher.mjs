@@ -1,5 +1,7 @@
 export default {
-  name: true,
-  country: true,
-  city: true
+  logo: null,
+  name: null,
+  country: null,
+  province: null,
+  city: null
 }

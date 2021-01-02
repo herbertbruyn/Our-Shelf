@@ -9,6 +9,12 @@
     :sort-desc="sortDesc"    
   >
     <!-- eslint-disable -->
+    <template v-slot:item.logo="{ item }">
+      <v-avatar size="60" class="my-2">
+        <v-img :src="item.logo"></v-img>
+      </v-avatar>
+    </template>
+
     <template v-slot:item.actions="{ item }">
       <v-icon class="mr-1" title="edit" @click="$emit('edit', item)">mdi-pencil</v-icon>
       <v-icon class="mr-1" title="remove" @click="$emit('remove', item)">mdi-delete</v-icon>
@@ -17,7 +23,7 @@
 </template>
 
 <script>
-import { enums, publisherValidator } from '@/common';
+import { enums, propsValidators } from '@/common';
 
 export default {
   name: 'AppPublishersList',
@@ -27,7 +33,7 @@ export default {
       default: () => [],
       validator: arr => {
         return arr.length === 0 
-        || arr.every(publisher => publisherValidator(publisher))
+        || arr.every(publisher => propsValidators.publisher(publisher))
       }
     },
     search: {
@@ -50,6 +56,34 @@ export default {
   },
   data() {
     return {
+      headers: [
+        {
+          text: 'Logo',
+          sortable: false,
+          value: 'logo'
+        },
+        {
+          text: 'Name',
+          value: 'name'
+        },
+        {
+          text: 'Country',
+          value: 'country'
+        },
+        {
+          text: 'Province',
+          value: 'province'
+        },
+        {
+          text: 'City',
+          value: 'city'
+        },
+        {
+          text: 'Actions',
+          sortable: false,
+          value: 'actions'
+        }
+      ],
       itemsPerPage: 5,
       itemsPerPageArray: [5, 10, 15],
       page: 1

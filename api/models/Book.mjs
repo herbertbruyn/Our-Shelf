@@ -87,8 +87,7 @@ export default (mongoose, { patterns, enums }) => {
       type: String,
       required: true,
       validate: {
-        validator: (val, props) => enums[props.type].indexOf(val) >= 0,
-        propsParameter: true 
+        validator: (val) => enums.FICTION.includes(val) || enums.NON_FICTION.includes(val),
       }
     }],
     keywords: [String],

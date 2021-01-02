@@ -8,24 +8,22 @@
     :sort-desc="sortDesc"    
   >
     <template v-slot:default="props">
-      <v-row>
-        <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="book in props.items" :key="book._id">
-          <div class="d-flex justify-center">
-            <app-book-card 
-              :book="book"
-              @edit="$emit('edit', book)"
-              @remove="$emit('remove', book)"
-              @showdetails="$emit('showdetails', book)"
-            ></app-book-card>
-          </div>
-        </v-col>
-      </v-row>
+      <div class="d-flex flex-wrap justify-start">
+        <app-book-card v-for="book in props.items" :key="book._id"
+          class="ma-1"
+          :book="book"
+          :size="readonly ? 'cover' : undefined"
+          @edit="$emit('edit', book)"
+          @remove="$emit('remove', book)"
+          @showdetails="$emit('showdetails', book)"
+        ></app-book-card>
+      </div>
     </template>
   </v-data-iterator>
 </template>
 
 <script>
-import { enums, bookValidator } from '@/common';
+import { enums, propsValidators } from '@/common';
 
 export default {
   name: 'AppCollectionGrid',
@@ -35,7 +33,7 @@ export default {
       default: () => [],
       validator: arr => {
         return arr.length === 0 
-        || arr.every(book => bookValidator(book))
+        || arr.every(book => propsValidators.book(book))
       }
     },
     search: {
@@ -52,6 +50,10 @@ export default {
       validator: val => enums.SORT_KEYS.BOOKS.includes(val)
     },
     sortDesc: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     }

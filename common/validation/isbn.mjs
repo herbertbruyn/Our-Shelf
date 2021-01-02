@@ -7,7 +7,7 @@ function getNumbers(str, type) {
   if (!isString(str)) { 
     return false; 
   }
-  let hasX = type === 'isbn10' && str.slice(-1) === 'X';
+  let hasX = type === 'isbn10' && str.substr(-1) === 'X';
 
   str = str.replace(/[^\d]+/g, '');
   let len = type === 'isbn13' ? 13 : 10;
@@ -63,9 +63,14 @@ const convertIsbn = (isbn, fromType = 'isbn10') => {
   if (!checkDigit(isbn, fromType)) {
     throw new Error('Invalid Isbn code!');
   }
-  let base = fromType === 'isbn10' ? '978' + isbn.slice(0,-1) : isbn.slice(3,-1);  
+  let hasX = fromType === 'isbn10' && isbn.substr(-1) === 'X';
+  let base = toType === 'isbn13' ? '978' + (hasX ? isbn.replace(/[^\d]+/g, '') : isbn.replace(/[^\d]+/g, '').slice(0,-1)) : isbn.replace(/[^\d]+/g, '').slice(3,-1);  
   let digit = getDigit(base.split('').map(Number), getWeights(toType)) + '';
-  return base + (digit === '10' ? 'X' : digit);
+  digit = digit === '10' ? 'X' : digit;
+  let formatted = fromType === 'isbn10' 
+  ? `${base.substr(0, 3)}-${base.substr(3, 2)}-${base.substr(5, 4)}-${base.substr(9, 3)}-${digit}`
+  : `${base.substr(0, 2)}-${base.substr(2, 4)}-${base.substr(6, 3)}-${digit}`
+  return formatted;
 }
 
 export const validateIsbn10 = str => checkDigit(str, 'isbn10');

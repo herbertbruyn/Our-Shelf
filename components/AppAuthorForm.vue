@@ -1,182 +1,134 @@
 <template>
-  <v-form ref="authorForm">
+  <v-form ref="authorForm" v-model="valid">
     <v-card>
       <v-card-title class="headline brown lighten-5 brown--text text--darken-4">
+        <v-icon large class="mr-1">mdi-fountain-pen-tip</v-icon>
         <span v-if="isNew">Insert New Author</span>
         <span v-else>Edit Author</span>
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text class="px-12">
         <v-row>
-          <v-col cols="12" sm="4" class="d-flex flex-column justify-center align-center">
-            <v-card v-if="authorInfo.picture && !pictureValid" flat width="250" height="350">
-              <v-card-text style="height: 350px; border: 1px solid lightgrey;" class="d-flex align-center justify-center">
-                <div style="width: 120px; height: 120px; border: 4px solid lightgrey;" class="d-flex align-center justify-center subtitle-1 rounded-circle text-center">
-                  Invalid URI
-                </div>
-              </v-card-text>
-            </v-card>
-            <v-img v-else-if="authorInfo.picture"
-              :src="authorInfo.picture" 
-              width="250" 
-              height="350" 
-              position="top center"
-            ></v-img>
-            <v-card v-else flat width="250" height="350">
-              <v-card-text style="height: 350px; border: 1px solid lightgrey;" class="d-flex align-center justify-center">
-                <div style="width: 120px; height: 120px; border: 4px solid lightgrey;" class="d-flex align-center justify-center subtitle-1 rounded-circle text-center">
-                  No Image Available
-                </div>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="4" class="py-0">
+            <app-image-input 
+              required 
+              height="400" 
+              width="auto"
+              v-model="formData.picture"
+              :rules="rules.picture"
+            ></app-image-input>
           </v-col>
-          <v-col cols="12" sm="8">
+          <v-col cols="12" md="8" class="py-0">
             <v-row>
-              <v-col>
+              <v-col class="py-0">
                 <v-text-field
-                  v-model="authorInfo.name"
+                  v-model="formData.name"
+                  dense 
                   outlined
-                  label="Name"
+                  clearable
+                  label="Author's Name"
                   placeholder=" "
                   :rules="rules.name"
-                  @input="checkFields()"
-                >
-                </v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-menu
-                  v-model="picker.birth"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="authorInfo.birthDate"
-                      label="Date of birth"
-                      placeholder=" "
-                      prepend-inner-icon="mdi-calendar"
-                      readonly
-                      outlined 
-                      clearable
-                      v-bind="attrs"
-                      v-on="on"
-                      @input="checkFields()"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="authorInfo.birthDate"
-                    :max="new Date().toISOString().substr(0, 10)"
-                    min="1900-01-01"
-                    @input="picker.birth = false"
-                    @change="checkFields()"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="authorInfo.birthPlace"
-                  outlined
-                  label="Place of birth"
-                  placeholder=" "
-                  :rules="rules.birthPlace"
-                  @input="checkFields()"
-                >
-                </v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-menu
-                  v-model="picker.death"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="authorInfo.deathDate"
-                      label="Date of death"
-                      placeholder=" "
-                      prepend-inner-icon="mdi-calendar"
-                      readonly
-                      outlined 
-                      clearable
-                      v-bind="attrs"
-                      v-on="on"
-                      @input="checkFields()"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="authorInfo.deathDate"
-                    :max="new Date().toISOString().substr(0, 10)"
-                    min="1900-01-01"
-                    @input="picker.death = false"
-                    @change="checkFields()"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="authorInfo.deathPlace"
-                  outlined
-                  label="Place of death"
-                  placeholder=" "
-                  :rules="rules.deathPlace"
-                  @input="checkFields()"
-                >
-                </v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="authorInfo.picture" 
-                  outlined
-                  label="Paste the image uri" 
-                  placeholder=" " 
-                  @input="checkFields()"
-                  @change="validateImageUrl"
+                  autocomplete="off"
+                  @input="checkForm()"
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="8" class="py-0">
+                <v-combobox
+                  v-model="formData.birthPlace"
+                  :items="places"
+                  dense
+                  outlined
+                  clearable
+                  label="Birth Place"
+                  placeholder=" "
+                  :rules="rules.birthPlace"
+                  autocomplete="off"
+                  @input="checkForm()"
+                ></v-combobox>
+              </v-col>
+              <v-col cols="4" class="py-0">
+                <v-text-field
+                  v-model="formData.birthYear"
+                  dense
+                  outlined
+                  label="Birth Year"
+                  placeholder=" "
+                  :rules="rules.birthYear"
+                  autocomplete="off"
+                  :suffix="formData.birthBC ? 'b.C.': 'a.C.'"
+                  append-outer-icon="mdi-autorenew"
+                  @click:append-outer="formData.birthBC = !formData.birthBC"
+                  @input="checkForm()"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="8" class="py-0">
+                <v-combobox
+                  v-model="formData.deathPlace"
+                  :items="places"
+                  dense
+                  outlined
+                  clearable
+                  label="Death Place"
+                  placeholder=" "
+                  :rules="rules.deathPlace"
+                  autocomplete="off"
+                  @input="checkForm()"
+                ></v-combobox>
+              </v-col>
+              <v-col cols="4" class="py-0">
+                <v-text-field
+                  v-model="formData.deathYear"
+                  dense
+                  outlined
+                  label="Death Year"
+                  placeholder=" "
+                  :rules="rules.deathYear"
+                  :suffix="formData.deathBC ? 'b.C.': 'a.C.'"
+                  append-outer-icon="mdi-autorenew"
+                  @click:append-outer="formData.deathBC = !formData.deathBC"
+                  @input="checkForm()"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="py-0">
+                <v-textarea 
+                  v-model="formData.shortBiography" 
+                  outlined
+                  no-resize
+                  dense
+                  label="A short biography"
+                  placeholder=" "
+                  rows="7"
+                  :counter="5000"
+                  :rules="rules.shortBiography"
+                  autocomplete="off"
+                  @input="checkForm()"
+                ></v-textarea>
+              </v-col>
+            </v-row>
           </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-textarea
-              v-model="authorInfo.shortBiography" 
-              outlined
-              label="A short biography"
-              placeholder=" "
-              auto-grow
-              :counter="1000"
-              :rules="rules.shortBiography"
-              @input="checkFields()"
-            >
-            </v-textarea>
-          </v-col>
-          <pre>{{ pictureValid }}</pre>
         </v-row>
       </v-card-text>
-      <v-card-actions class="px-4 pb-5">
+      <v-card-actions class="px-8 pb-8">
         <v-btn large icon @click="reset()">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
         <div class="ml-auto">
-          <v-btn large text @click="cancel()">cancel</v-btn>
-          <v-btn large text class="ml-2" 
+          <v-btn x-large outlined class="mr-4" color="grey" @click="cancel()">cancel</v-btn>
+          <v-btn x-large depressed class="ml-2" 
             :class="!valid || !touched ? '' : (isNew ? 'primary' : 'success')" 
             :disabled="!valid || !touched" 
             @click="submit()">
             <span v-if="isNew">Create</span>
             <span v-else>Update</span>
-            <v-icon v-if="isNew" small class="ml-2">mdi-plus-circle-outline</v-icon>
-            <v-icon v-else small class="ml-2">mdi-content-save</v-icon>
+            <v-icon v-if="isNew" class="ml-2">mdi-plus-circle-outline</v-icon>
+            <v-icon v-else class="ml-2">mdi-content-save</v-icon>
           </v-btn>
         </div>
       </v-card-actions>
@@ -185,7 +137,7 @@
 </template>
 
 <script>
-import { entities, enums, authorValidator, imageUrlExists } from '@/common';
+import { enums, entities, propsValidators, formRules, equals, cropClone } from '@/common';
 const { Author } = entities;
 
 export default {
@@ -195,36 +147,23 @@ export default {
       type: Object,
       required: false,
       default: null,
-      validator: author => authorValidator(author)
+      validator: author => propsValidators.author(author)
     }
   },
   data() {
     return {
       valid: false,
       touched: false,
-      picker: {
-        birth: false,
-        death: false
-      },
-      pictureValid: false,
-      authorInfo: {
-        name: null,
-        picture: null,
-        birthDate: null,
-        deathDate: null,
-        birthPlace: null,
-        deathPlace: null,
-        shortBiography: null
-      },
-      rules: {
-        name: [],
-        picture: [],
-        birthDate: [],
-        deathDate: [],
-        birthPlace: [],
-        deathPlace: [],
-        shortBiography: []
-      }
+      formData: { ...Author },
+      initial: { ...Author },
+      rules: formRules.author,
+      places: Object.keys(enums.COUNTRY)
+    }
+  },
+  watch: {
+    author(val) {
+      this.setInitial();
+      this.reset();
     }
   },
   computed: {
@@ -233,57 +172,38 @@ export default {
     }
   },
   methods: {
+    setInitial() {
+      this.initial = this.author === null ? { ...Author } : cropClone(this.author, Author);
+    },
+    resetFormData() {
+      this.formData = this.isNew ? { ...Author } : { ...this.initial };
+    },
     reset() {
-      if (this.$refs.authorForm) {
-        this.$refs.authorForm.reset();
-      }
+      if (this.$refs.authorForm) this.$refs.authorForm.reset();
       this.$nextTick(() => {
-        this.authorInfo.name = this.author && this.author.name || '';
-        this.authorInfo.picture = this.author && this.author.picture || '';
-        this.authorInfo.birthDate = this.author && this.author.birthDate || '';
-        this.authorInfo.deathDate = this.author && this.author.deathDate || '';
-        this.authorInfo.birthPlace = this.author && this.author.birthPlace || '';
-        this.authorInfo.deathPlace = this.author && this.author.deathPlace || '';
-        this.authorInfo.shortBiography = this.author && this.author.shortBiography || '';
-        this.touched = false;
+        this.resetFormData();
+        this.checkForm();
       });
     },
-    equals(a, b) {
-      return JSON.stringify(a) === JSON.stringify(b);
-    },
-    checkFields() {
-      this.touched = this.isNew 
-          || !this.equals(this.authorInfo.name, this.author.name)
-          || !this.equals(this.authorInfo.picture, this.author.picture)
-          || !this.equals(this.authorInfo.birthDate, this.author.birthDate)
-          || !this.equals(this.authorInfo.deathDate, this.author.deathDate)
-          || !this.equals(this.authorInfo.birthPlace, this.author.birthPlace)
-          || !this.equals(this.authorInfo.deathPlace, this.author.deathPlace)
-          || !this.equals(this.authorInfo.shortBiography, this.author.shortBiography)
-    },
-    async validateImageUrl(url) {
-      
-      return this.pictureValid = await imageUrlExists(url);
+    checkForm() {
+      this.touched = this.isNew || !equals(this.formData, this.initial);
     },
     cancel() {
-      this.reset();
       this.$emit('cancel');
+      this.reset();
     },
     submit() {
-      if (this.isNew) {
-        this.$emit('add', this.authorInfo);
-      } else {
-        this.$emit('update', this.authorInfo);        
+      this.$refs.authorForm.validate();
+      if (this.valid) {
+        let event = this.isNew ? 'add' : 'update';
+        this.$emit(event, { ...this.formData });
+        this.reset();
       }
     }
   },
   mounted() {
+    this.setInitial();
     this.reset();
-    this.rules.name = this.$createRules('required|minLength:5|maxLength:50');
-    this.rules.picture = [() => this.pictureValid || 'Picture URI is invalid'];
-    this.rules.birthPlace = this.$createRules('maxLength:50');
-    this.rules.deathPlace = this.$createRules('maxLength:50');
-    this.rules.shortBiography = this.$createRules('maxLength:1000');
   }
 }
 </script>

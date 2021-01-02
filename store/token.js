@@ -18,13 +18,16 @@ export const actions = {
     this.$auth.$storage.removeUniversal(process.env.storageKey);
   },
 
-  async parseToken({ commit }, jwtToken) {
+  async parseToken({ rootState, commit }, jwtToken) {
     jwtToken = jwtToken || this.$auth.$storage.getUniversal(process.env.storageKey);
     if (!jwtToken) { return }
     
     let user;
     try { user = TokenService.decode(jwtToken, process.env.jwtSignature); 
-    } catch (e) { throw new Error(e.message || 'Invalid token!') }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || 'Invalid token!') 
+    }
 
     this.$auth.setUser(user);
     commit('setToken', jwtToken);
@@ -32,12 +35,16 @@ export const actions = {
   },
 
 
-  async getToken({ commit, dispatch }) {
+  async getToken({ rootState, dispatch }) {
     if (!this.$auth.loggedIn) { return dispatch('clearToken') }
 
     let response;
     try { response = await this.$axios.post('/api/users', { ...this.$auth.user }) 
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Sign in error!'); }
+    } catch (e) {
+      dispatch('clearToken');
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.response && e.response.data && e.response.data.message || 'Sign in error!'); 
+    }
 
     let jwtToken = response.data.token;
 

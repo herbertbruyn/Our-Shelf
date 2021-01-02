@@ -21,7 +21,7 @@ export default {
   },
 
   find: async (query) => {
-    try { return await User.find(query); 
+    try { return await User.find(query).select('collectionName createdAt email picture interests description name'); 
     } catch (e) { throw new Error(e) }
   },
 

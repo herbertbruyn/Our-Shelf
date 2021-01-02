@@ -3,6 +3,7 @@
     <app-filter-bar class="mx-md-16 mb-4"
       type="publishers"
       title="Publishers"
+      :src="require('~/assets/banner_publishers.png')"
       :search="search"
       :letter="letter"
       :sort-by="sortBy"
@@ -17,7 +18,7 @@
       <v-card-title>
         <div>
           <v-chip label>
-            <v-icon>mdi-domain</v-icon>
+            <v-icon class="mr-1">mdi-domain</v-icon>
             <span v-if="publishers.length === 0">no publishers</span>
             <span v-else-if="publishers.length === 1">one publisher</span>
             <span v-else>{{ publishers.length }} publishers</span>
@@ -42,10 +43,10 @@
         ></app-publishers-list>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="form">
+    <v-dialog max-width="900" v-model="show.form">
       <app-publisher-form
         :publisher="selected"
-        @cancel="form = false"
+        @cancel="cancel"
         @add="create"
         @update="update"
       ></app-publisher-form>
@@ -65,9 +66,10 @@ export default {
     return {
       updating: false,
       show: {
-        confirmation: false
+        confirmation: false,
+        details: false,
+        form: false
       },
-      form: false,
       selected: null,
       search: null,
       letter: null,
@@ -93,19 +95,24 @@ export default {
     sortDescChangeHandler(sortDesc) {
       this.sortDesc = sortDesc;
     },
+    cancel() {
+      this.selected = null;
+      this.show.form = false;
+    },
     add() {
       this.selected = null;
-      this.form = true;
+      this.show.form = true;
     },
     edit(publisher) {
       this.selected = publisher;
-      this.form = true;
+      this.show.form = true;
     },
     remove(publisher) {
       this.selected = publisher;
       this.show.confirmation = true;
     },
     async create(publisherInfo) {
+      this.show.form = false;
       this.updating = true;
       try { 
         await this.$store.dispatch('publishers/create', publisherInfo);
@@ -113,9 +120,11 @@ export default {
       } catch (e) {
         this.$notifyError(e.message);
       }
+      this.selected = null;
       this.updating = false;
     },
     async update(publisherInfo) {
+      this.show.form = false;
       this.updating = true;
       try { 
         await this.$store.dispatch('publishers/update', { id: this.selected._id, publisherInfo });
@@ -123,6 +132,7 @@ export default {
       } catch (e) {
         this.$notifyError(e.message);
       }
+      this.selected = null;
       this.updating = false;
     },
     async deleteHandler(yes) {

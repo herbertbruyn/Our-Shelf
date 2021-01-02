@@ -29,6 +29,10 @@ export const isNumber = (d) => {
   return toType(d) === 'number';
 }
 
+export const isBoolean = (d) => {
+  return toType(d) === 'boolean';
+}
+
 export const isRegExp = (d) => {
   return toType(d) === 'regexp';
 }

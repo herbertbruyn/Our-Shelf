@@ -13,7 +13,9 @@ export default {
 
     let bookData;
     try { bookData = await findBookData(isbn);
-    } catch (e) { return errorHandler(res, e.message || 'Search failed!'); }
+    } catch (e) { 
+      console.log(e);
+      return errorHandler(res, e.message || 'Search failed!'); }
 
     if (!bookData) { return errorHandler(res, 'Book not found!'); }
 

@@ -1,21 +1,14 @@
-import { Author, Book, Publisher, User } from './entities';
+import { Author, Book, Publisher, User, defaultValues } from './entities';
 import { isObject } from './utils';
 
 export { default as TokenService } from './token';
 export * from './validation';
-export { filter } from './utils';
-
-const nullify = (entity) => {
-  return Object.keys(entity).reduce((r, prop) => {
-    r[prop] = isObject(r[prop]) ? nullify(r[prop]) : null;
-    return r;
-  }, {})
-}
+export { cloneDeep, equals, cropClone, filter } from './utils';
 
 export const entities = {
-  Author: nullify(Author),
-  Book: nullify(Book),
-  Publisher: nullify(Publisher),
-  User: nullify(User)
+  Author: Object.assign(Author, defaultValues.author),
+  Book: Object.assign(Book, defaultValues.book),
+  Publisher: Object.assign(Publisher, defaultValues.publisher),
+  User: Object.assign(User, defaultValues.user)
 }
 

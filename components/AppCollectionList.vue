@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { enums, bookValidator } from '@/common';
+import { enums, propsValidators } from '@/common';
 
 export default {
   name: 'AppCollectionList',
@@ -38,7 +38,7 @@ export default {
       default: () => [],
       validator: arr => {
         return arr.length === 0 
-        || arr.every(book => bookValidator(book))
+        || arr.every(book => propsValidators.book(book))
       }
     },
     search: {
@@ -67,6 +67,7 @@ export default {
       headers: [
         {
           text: 'Cover',
+          sortable: false,
           value: 'coverImage'
         },
         {

@@ -10,7 +10,9 @@ export default {
     }
     let user;
     try { user = await UserService.signInOrSignUp(req.body);
-    } catch (e) { return res.status(500).send({ message: e.message || 'User sign in failed!' }); }
+    } catch (e) { 
+      console.log(e)
+      return res.status(500).send({ message: e.message || 'User sign in failed!' }); }
 
     return res.status(200).send({ token: TokenService.encode(user, process.env.JWT_SIGNATURE) });
   },

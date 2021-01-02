@@ -17,7 +17,7 @@ export const mutations = {
     if (index < 0) {
       throw new Error('Database is updated, but local list of authors appears to be inconsistent!');
     }
-    state.list[index] = author;
+    state.list.splice(index, 1, author);
   },
 
   delete(state, id) {
@@ -36,8 +36,9 @@ export const actions = {
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { authors = await this.$axios.$get(`/api/authors`);
     } catch (e) { 
-      console.log(e)
-      throw new Error(e.response && e.response.data && e.response.data.message || 'Error ocurred while retrieving authors!'); }
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Error ocurred while retrieving authors!'); 
+    }
 
     commit('setList', authors);
 
@@ -48,7 +49,10 @@ export const actions = {
     let author;
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { author = await this.$axios.$post(`/api/authors`, authorInfo);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Error occurred while creating author!'); }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Error occurred while creating author!'); 
+    }
 
     commit('add', author);
 
@@ -60,7 +64,10 @@ export const actions = {
     let author;
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { author = await this.$axios.$put(`/api/authors/${id}`, authorInfo);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Update error!'); }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Update error!'); 
+    }
 
     commit('update', { id, author });
 
@@ -71,7 +78,10 @@ export const actions = {
     let response;
     this.$axios.setHeader('x-token', rootState.token.jwt);
     try { response = await this.$axios.$delete(`/api/authors/${id}`);
-    } catch (e) { throw new Error(e.response && e.response.data && e.response.data.message || 'Deletion error!') }
+    } catch (e) { 
+      if (rootState.isDev) console.log(e);
+      throw new Error(e.message || e.response && e.response.data && e.response.data.message || 'Deletion error!') 
+    }
 
     commit('delete', id);
 

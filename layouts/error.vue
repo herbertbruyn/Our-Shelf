@@ -8,7 +8,15 @@
             {{ pageNotFound }}
           </h1>
           <h1 v-else class="mx-auto">
-            {{ otherError }}
+            <span v-if="error.statusCode">
+              {{ error.statusCode }}
+            </span>
+            <span v-if="error.message">
+              {{ error.message }}
+            </span>
+            <span v-else>
+              {{ otherError }}
+            </span>
           </h1>
           <div class="ma-2">
             <NuxtLink to="/">

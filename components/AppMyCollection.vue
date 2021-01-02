@@ -2,6 +2,7 @@
   <div>
     <app-filter-bar class="mx-md-16 mb-4"
       :title="$auth.user.collectionName"
+      :src="require('~/assets/banner.jpg')"
       :search="search"
       :subtype="subtype"
       :sort-by="sortBy"
@@ -57,8 +58,18 @@
         ></app-collection-grid>
       </v-card-text>
     </v-card>
-    <app-book-details v-if="selected" v-model="showDetailsDialog" :book="selected"></app-book-details>
-    <app-confirmation-dialog v-if="selected" v-model="confirmationDialog" @accept="deleteHandler($event)">
+    <v-dialog max-width="900" v-model="show.form">
+      <app-book-form
+        :book="selected"
+        :authors="authors"
+        :publishers="publishers"
+        @cancel="cancel"
+        @add="create"
+        @update="update"
+      ></app-book-form>
+    </v-dialog>
+    <app-book-details v-if="selected" v-model="show.details" :book="selected"></app-book-details>
+    <app-confirmation-dialog v-if="selected" v-model="show.confirmation" @accept="deleteHandler($event)">
       <p class="text-body-1">
         Are you sure you want to permanently remove <span class="font-weight-bold">{{ selected.title }}</span>?
       </p>
@@ -73,9 +84,11 @@ export default {
   data() {
     return {
       updating: false,
-      showDetailsDialog: false,
-      confirmationDialog: false,
-      bookForm: false,
+      show: {
+        form: false,
+        confirmation: false,
+        details: false
+      },
       selected: null,
       layout: 2,
       search: null,
@@ -87,6 +100,12 @@ export default {
   computed: {
     books() {
       return this.$store.state.books.collection;
+    },
+    authors() {
+      return this.$store.state.authors.list.map(author => author.name);
+    },
+    publishers() {
+      return this.$store.state.publishers.list.map(publisher => publisher.name);
     }
   },
   methods: {
@@ -102,40 +121,44 @@ export default {
     sortDescChangeHandler(sortDesc) {
       this.sortDesc = sortDesc;
     },
+    cancel() {
+      this.selected = null;
+      this.show.form = false;
+    },
     add() {
       this.selected = null;
-      this.bookForm = true;
+      this.show.form = true;
     },
     edit(book) {
       this.selected = book;
-      this.bookForm = true;
+      this.show.form = true;
     },
     remove(book) {
       this.selected = book;
-      this.confirmationDialog = true;
+      this.show.confirmation = true;
     },
     showDetails(book) {
       this.selected = book;
-      this.showDetailsDialog = true;
+      this.show.details = true;
     },
     async create(bookInfo) {
+      this.show.form = false;
       this.updating = true;
       try { 
         await this.$store.dispatch('books/create', bookInfo);
         this.$notifySuccess('Book created!'); 
-      } catch (e) {
-        this.$notifyError(e.message);
-      }
+      } catch (e) { this.$notifyError(e.message); }
+      this.selected = null;
       this.updating = false;
     },
     async update(bookInfo) {
+      this.show.form = false;
       this.updating = true;
       try { 
         await this.$store.dispatch('books/update', { id: this.selected._id, bookInfo });
         this.$notifySuccess('Book updated!'); 
-      } catch (e) {
-        this.$notifyError(e.message);
-      }
+      } catch (e) { this.$notifyError(e.message); }
+      this.selected = null;
       this.updating = false;
     },
     async deleteHandler(yes) {
@@ -145,9 +168,7 @@ export default {
       try { 
         let response = await this.$store.dispatch('books/delete', this.selected._id); 
         this.$notifyInfo(response.message || 'Book deleted!'); 
-      } catch (e) {
-        this.$notifyError(e.message);
-      }
+      } catch (e) { this.$notifyError(e.message); }
       this.updating = false;
     }
   }

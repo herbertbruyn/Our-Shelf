@@ -1,14 +1,14 @@
 export default {
-  sub: true,
-  name: true,
-  given_name: true,
-  family_name: true,
-  picture: true,
-  email: true,
-  email_verified: false,
-  locale: false,
-  collectionName: true,
-  description: false,
-  interests: false,
-  birthDate: false
+  sub: null,
+  name: null,
+  given_name: null,
+  family_name: null,
+  picture: null,
+  email: null,
+  email_verified: null,
+  locale: null,
+  collectionName: null,
+  description: null,
+  interests: null,
+  birthDate: null
 }

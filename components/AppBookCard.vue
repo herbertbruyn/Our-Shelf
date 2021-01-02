@@ -1,7 +1,7 @@
 <template>
   <v-card tile :width="width">
-    <v-img :src="book.coverImage" :height="height" position="top center" :title="book.title"></v-img>
-    <v-rating
+    <v-img :src="book.coverImage" :height="height" position="top center" :title="book.title" @click="imageClickHandler"></v-img>
+    <v-rating v-if="size !== 'cover'"
       class="text-center"
       :value="book.stars" 
       color="orange"
@@ -12,7 +12,7 @@
       dense
       readonly
     ></v-rating>
-    <v-card-actions>
+    <v-card-actions v-if="size !== 'cover'">
       <v-btn icon title="edit" @click="$emit('edit')">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { bookValidator } from '@/common';
+import { propsValidators } from '@/common';
 
 export default {
   name: 'AppBookCard',
@@ -35,12 +35,13 @@ export default {
     book: {
       type: Object,
       required: true,
-      validator: book => bookValidator(book)
+      validator: book => propsValidators.book(book)
     },
     size: {
       type: String,
       default: 'medium',
       validator: val => [
+        'cover',
         'small',
         'medium',
         'large'
@@ -50,11 +51,13 @@ export default {
   data() {
     return {
       widths: {
+        cover: '100',
         small: '150',
         medium: '200',
         large: '300'
       },
       heights: {
+        cover: '150',
         small: '200',
         medium: '300',
         large: '500'
@@ -67,6 +70,13 @@ export default {
     },
     height() {
       return this.heights[this.size];
+    }
+  },
+  methods: {
+    imageClickHandler() {
+      if (this.size === 'cover') {
+        this.$emit('showdetails');
+      }      
     }
   }
 }

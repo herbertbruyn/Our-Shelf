@@ -11,14 +11,14 @@
             <v-img :src="book.coverImage" width="300" height="450" position="top center"></v-img>
           </v-col>
           <v-col>
-            <div class="text-h4 font-weight-bold">{{ book.title }}</div>
+            <div class="text-h4 font-weight-bold mb-4">{{ book.title }}</div>
             <div class="text-subtitle-1">{{ book.authors.map(author => author.name).join(', ') }}</div>
             <div class="text-subtitle-1">{{ book.publishers.map(publisher => publisher.name).join(', ') }}</div>
             <div class="text-subtitle-1">{{ book.edition }}</div>
             <div class="text-subtitle-1">{{ book.publishYear }}, {{ book.publishPlace }}</div>
             <div class="text-subtitle-1">{{ book.format }}</div>
             <v-rating
-              class="text-left"
+              class="text-left my-4"
               :value="book.stars" 
               color="orange"
               background-color="orange lighten-3" 
@@ -50,14 +50,14 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn large depressed color="primary" @click="$emit('input', false)">close</v-btn>
+        <v-btn x-large text color="primary" @click="$emit('input', false)">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import { bookValidator } from '@/common';
+import { propsValidators } from '@/common';
 
 export default {
   name: "AppBookDetails",
@@ -65,7 +65,7 @@ export default {
     book: {
       type: Object,
       required: true,
-      validator: book => bookValidator(book)
+      validator: book => propsValidators.book(book)
     },
     value: {
       type: Boolean,

@@ -13,29 +13,34 @@ export const cloneDeep = (o) => {
   return o;
 };
 
-export const equals = (a, b) => {
-  if (isFalsy(a) && isFalsy(b)) {
-    return true;
+export const cropClone = (target, ref) => {
+  return Object.keys(ref).reduce((r, k) => {
+    if (Array.isArray(target[k]) || isObject(target[k])) {
+      r[k] = cloneDeep(target[k]);
+      return r;
+    }
+    r[k] = target[k];
+    return r;
+  }, {});
+}
+
+export const equals = (a, b, treatEmptyArrayAndEmptyObjectAsFalsy = true) => {
+  if (isFalsy(a)) {
+    return isFalsy(b);
   }
-  if (isFalsy(a) && (isEmptyArray(b) || isEmptyObject(b))) {
-    return true;
-  }
-  if (isFalsy(b) && (isEmptyArray(a) || isEmptyObject(a))) {
-    return true;
-  }
-  if ((isEmptyArray(a) || isEmptyObject(a)) && (isEmptyArray(b) || isEmptyObject(b))) {
-    return true;
+  if (treatEmptyArrayAndEmptyObjectAsFalsy && (isEmptyArray(a) || isEmptyObject(a))) {
+    return isEmptyArray(b) || isEmptyObject(b);
   }
   if (toType(a) !== toType(b)) {
     return false;
   }
-  if (Array.isArray(a) && Array.isArray(b)) {
+  if (Array.isArray(a)) {
     return a.length === b.length && a.every((v, i) => equals(v, b[i]));
   }
-  if (isObject(a) && isObject(b)) {
+  if (isObject(a)) {
     return equals(Object.keys(a), Object.keys(b)) && Object.keys(a).every(key => equals(a[key], b[key]));
   }
-  if (isDate(a) && isDate(b)) {
+  if (isDate(a)) {
     return a.valueOf() === b.valueOf();
   }
   return a === b;

@@ -14,7 +14,7 @@ import { interpolateBlues } from 'd3-scale-chromatic';
 import { interpolateOranges } from 'd3-scale-chromatic';
 import { interpolateInferno } from 'd3-scale-chromatic';
 
-import { bookValidator } from '@/common';
+import { propsValidators } from '@/common';
 
 export default {
   name: 'UserCollectionDashboard',
@@ -24,7 +24,7 @@ export default {
       required: true,
       validator: arr => {
         return arr.length === 0
-        || arr.every(book => bookValidator(book));
+        || arr.every(book => propsValidators.book(book));
       }
     }
   },

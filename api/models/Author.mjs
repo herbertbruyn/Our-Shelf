@@ -12,17 +12,26 @@ export default (mongoose, { patterns }) => {
     },
     picture: {
       type: String,
-      required: true
+      required: true,
+      validate: val => patterns.URL.test(val) || patterns.DATA_URL.test(val)  
     },
-    birthDate: {
+    birthYear: {
       type: String,
       required: false,
-      match: patterns.DATE
+      match: patterns.YEAR
     },
-    deathDate: {
+    birthBC: {
+      type: Boolean,
+      default: false
+    },
+    deathYear: {
       type: String,
       required: false,
-      match: patterns.DATE
+      match: patterns.YEAR
+    },
+    deathBC: {
+      type: Boolean,
+      default: false
     },
     birthPlace: {
       type: String,
@@ -39,7 +48,7 @@ export default (mongoose, { patterns }) => {
     shortBiography: {
       type: String,
       required: false,
-      maxlength: 1000,
+      maxlength: 5000,
     }
   }, options);
   return mongoose.model('Author', schema);

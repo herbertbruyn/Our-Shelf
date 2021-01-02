@@ -121,37 +121,34 @@ export default {
 
     let info = {};
   
-    for (i = 0; i < targets.length; i++) {
-  
-      let target = targets[i];
-  
-      let browser;
-      try { browser = await puppeteer.launch({ headless: true, args });
+    let target = targets[1];
+
+    let browser;
+    try { browser = await puppeteer.launch({ headless: true, args });
+    } catch (e) { return errorHandler(browser, e); }
+
+    let page;
+    try { page = await browser.newPage();
+    } catch (e) { return errorHandler(browser, e); }
+
+    try { await page.goto(target.domain + `/s?k=${isbn}&ref=nb_sb_noss`, { waitUntil: 'load', timeout: 5000 });
+    } catch (e) { return errorHandler(browser, e); }
+
+    let buttonIsThere;
+    try { buttonIsThere = await checkButton(page, target);
+    } catch (e) { return errorHandler(browser, e); }
+
+    if (buttonIsThere) {
+      try { await click(page, target);
       } catch (e) { return errorHandler(browser, e); }
   
-      let page;
-      try { page = await browser.newPage();
+      try { info = await getInfo(page, target);
       } catch (e) { return errorHandler(browser, e); }
   
-      try { await page.goto(target.domain + `/s?k=${isbn}&ref=nb_sb_noss`, { waitUntil: 'load', timeout: 5000 });
-      } catch (e) { return errorHandler(browser, e); }
-  
-      let buttonIsThere;
-      try { buttonIsThere = await checkButton(page, target);
-      } catch (e) { return errorHandler(browser, e); }
-  
-      if (buttonIsThere) {
-        try { await click(page, target);
-        } catch (e) { return errorHandler(browser, e); }
-    
-        try { info[target.domain] = await getInfo(page, target);
-        } catch (e) { return errorHandler(browser, e); }
-    
-        info[target.domain].details = parseDetails(info[target.domain].details);
-  
-        try { await browser.close();
-        } catch (e) { errorHandler(browser, e); }
-      }
+      info.details = parseDetails(info.details);
+
+      try { await browser.close();
+      } catch (e) { errorHandler(browser, e); }
     }
     return info;
   }

@@ -1,7 +1,7 @@
 <template>
   <v-row class="mb-auto">
     <v-col>
-      <app-user-collection></app-user-collection>
+      <app-my-collection></app-my-collection>
     </v-col>
   </v-row>
 
@@ -10,10 +10,13 @@
 <script>
 export default { 
   async asyncData({ store, $notifyError }) {
-    try { await store.dispatch('books/getMyCollection')
+    try {
+      await store.dispatch('books/getMyCollection');
+      await store.dispatch('authors/getList');
+      await store.dispatch('publishers/getList');
     } catch(e) {
-      if (process.client) return $notifyError(e.message) 
-      console.log(e);
+      if (process.client) { $notifyError(e.message) } 
+      if (isDev) { console.log(e); }
     }
   }
 }

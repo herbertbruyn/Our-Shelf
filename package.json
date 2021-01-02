@@ -18,7 +18,8 @@
     "moment": "^2.29.1",
     "mongoose": "^5.11.8",
     "nuxt": "^2.14.6",
-    "puppeteer": "^5.5.0"
+    "puppeteer": "^5.5.0",
+    "vue-the-mask": "^0.11.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^5.0.0",

@@ -54,6 +54,11 @@ export default {
           to: '/publishers'
         },
         {
+          icon: 'tools',
+          title: 'Tools',
+          to: '/tools'
+        },
+        {
           icon: 'comma',
           title: 'Famous Quotes',
           to: '/quotes'

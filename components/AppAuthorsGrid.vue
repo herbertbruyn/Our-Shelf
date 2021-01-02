@@ -11,7 +11,7 @@
       <v-row>
         <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="author in props.items" :key="author._id">
           <div class="d-flex justify-center">
-            <app-author-card 
+            <app-author-card size="small"
               :author="author"
               @edit="$emit('edit', author)"
               @remove="$emit('remove', author)"
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { enums, authorValidator } from '@/common';
+import { enums, propsValidators } from '@/common';
 
 export default {
   name: 'AppAuthorsGrid',
@@ -34,7 +34,7 @@ export default {
       default: () => [],
       validator: arr => {
         return arr.length === 0 
-        || arr.every(author => authorValidator(author))
+        || arr.every(author => propsValidators.author(author))
       }
     },
     search: {
@@ -47,7 +47,7 @@ export default {
     },
     sortBy: {
       type: String,
-      default: enums.SORT_KEYS[0],
+      default: enums.SORT_KEYS.AUTHORS[0],
       validator: val => enums.SORT_KEYS.AUTHORS.includes(val)
     },
     sortDesc: {

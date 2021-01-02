@@ -2,7 +2,7 @@
   <v-card :disabled="disabled">
     <v-img :height="height"
       class="px-4" 
-      :src="require('~/assets/banner.jpg')"
+      :src="src"
       gradient="to top right, rgba(62, 39, 35, .9), rgba(93, 64, 55, .4)"
     >
       <v-row>
@@ -41,7 +41,7 @@
             @input="$emit('searchchange', $event)"
           ></v-text-field>
         </v-col>
-        <v-col v-if="type === 'books'" cols="12" sm="6" md="3">
+        <v-col v-if="type === 'books' || type === 'collections'" cols="12" sm="6" md="3">
           <v-select
             label="Subcategory" 
             :value="subtype" 
@@ -108,7 +108,11 @@ export default {
     type: {
       type: String,
       default: 'books',
-      validator: val => [ 'books', 'authors', 'publishers' ].includes(val)
+      validator: val => [ 'books', 'authors', 'publishers', 'collections' ].includes(val)
+    },
+    src: {
+      type: String,
+      default: ''
     },
     title: {
       type: String,
@@ -120,8 +124,7 @@ export default {
     },
     sortBy: {
       type: String,
-      default: '',
-      validator: val => !val || enums.SORT_KEYS.includes(val)
+      default: ''
     },
     sortDesc: {
       type: Boolean,
@@ -151,7 +154,8 @@ export default {
       keys: {
         books: enums.SORT_KEYS.BOOKS,
         authors: enums.SORT_KEYS.AUTHORS,
-        publishers: enums.SORT_KEYS.PUBLISHERS
+        publishers: enums.SORT_KEYS.PUBLISHERS,
+        collections: enums.SORT_KEYS.BOOKS
       }
     }
   },
