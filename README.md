@@ -35,21 +35,21 @@ The app also allows users to retrieve book information from `Amazon.com`, so as 
     * _famous quotes carousel_
     * _charts with general collection stats_
 
-Here are some screenshots of the app while running:
+Here are some screenshots of the app in execution:
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-around;">
 
   <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot1.png" alt="Screenshot 1" />
-  <small>Screenshot 1. Initial screen. Option to sign-in with Google. Anonymous user has access to famous quotes.</small>
+  <small style="margin-bottom: 16px">Screenshot 1. Initial screen. Option to sign-in with Google. Anonymous user has access to famous quotes.</small>
 
   <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot2.png" alt="Screenshot 2" />
-  <small>Screenshot 2. Collection view screen. Charts with general stats.</small>
+  <small style="margin-bottom: 16px">Screenshot 2. Collection view screen. Charts with general stats.</small>
 
   <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot3.png" alt="Screenshot 3" />
-  <small>Screenshot 3. Collection view screen. Grid view.</small>
+  <small style="margin-bottom: 16px">Screenshot 3. Collection view screen. Grid view.</small>
 
   <img width="900px" style="margin-top: 16px" src="https://github.com/cmlima/our-shelf/raw/master/static/screenshot4.png" alt="Screenshot 4" />
-  <small>Screenshot 3. Collection view screen. List view.</small>
+  <small style="margin-bottom: 16px">Screenshot 4. Collection view screen. List view.</small>
 
 </div>
 
@@ -58,14 +58,14 @@ Here are some screenshots of the app while running:
 
 Initially, `Our Shelf Project` was thought as a social network for book lovers, who would share online their passion and ideas about books and culture in general. The plan was to enable even the exchange of books themselves (physically) through the social network.
 
-Our dream is still that `Our Shelf` will one day become a huge hub for literature lovers in which users will be able to collaborate and form a huge public shared library. However, due to the present time restrictions (deadline comming very soon), the current scope is obviously much narrower and comprises only the features described above.
+Our dream is still that `Our Shelf` would one day become a huge hub for literature lovers in which users would be able to collaborate and form a huge public shared library. However, due to the present time restrictions (deadline comming very soon), the current scope is obviously much narrower and comprises only the features described above.
 
 ---
 ## Technical Considerations
 
 #### Language and Frameworks
 
-The project was developed using Javascript on both server and client-side. We took advantage of existing frameworks in order to speed up development and asure that the whole architecture had a minimum quality.
+The project was developed using Javascript on both server and client-side. We took advantage of existing frameworks in order to speed up development and assure that the whole architecture had a minimum quality.
 
 In particular, we used `Nuxt`, which is a SSR (server-side-rendering) framework built on top of `Vue`. 
 
@@ -111,11 +111,11 @@ Authentication and authorization are assured for every route (except sign-in / s
 
 A JWT token is generated each time a user signs in. The token is returned to the client, where it is kept stored in cookies, in memory and in the Local Storage.
 
-In every requesto to the server, the token is sent in the headers, in a custom property named "x-token".
+In every request to the server, the token is sent in the headers, in a custom property named "x-token".
 
-A server middleware than decodes the token and cheks if the requester is duly authorized.
+A server middleware then decodes the token and checks if the requester is duly authorized.
 
-What makes this system secured is that JWT tokens can only be decoded with the use of a secret, which is shared between client and server, but never exchanged in requests (the secret is kept in environment variables only).
+What makes this system secure is that JWT tokens can only be decoded with a secret key, which is shared between client and server, but never exchanged in requests (the secret is kept in environment variables only).
 
 #### Build Setup
 
@@ -141,7 +141,7 @@ For detailed explanation on how things work, check out [Nuxt.js docs](https://nu
 
 #### Reference
 
-Links to the most relevant libraries used in the project are found below:
+Links to the most relevant libraries used in this project are found below:
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-around;">
 
