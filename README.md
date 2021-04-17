@@ -181,7 +181,7 @@ Links to the most relevant libraries used in the project are found below:
 
 #### Repository
 
-Source code may be found at [GitHub](https://github.com/cmlima/our-shelf).
+Source code may be found at [GitHub](https://github.com/herbertbruyn/Our-Shelf).
 
 
 
